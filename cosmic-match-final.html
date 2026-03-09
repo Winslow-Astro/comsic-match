@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmic Match — Forget dating apps. Ask the stars.</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0812;
+    --cream: #f0ebe0;
+    --gold: #e2b95a;
+    --gold-dim: #c8983a;
+    --rose: #d48888;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  #cosmic-app {
+    background: var(--ink);
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+  }
+  .stars {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 8%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 25%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 85% 12%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 75%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 60% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 35%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 20% 92%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 95% 45%, rgba(255,255,255,0.4) 0%, transparent 100%);
+  }
+  .nebula {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 15% 30%, rgba(107,79,138,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 85% 70%, rgba(196,122,122,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 50% at 50% 50%, rgba(201,168,76,0.05) 0%, transparent 70%);
+  }
+  .container {
+    position: relative; z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+  header { text-align: center; margin-bottom: 56px; }
+  .symbol {
+    font-size: 40px; display: block; margin-bottom: 16px;
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+  h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(18px, 4.5vw, 28px);
+    font-weight: 400; color: var(--gold);
+    letter-spacing: 0.06em; line-height: 1.3; margin-bottom: 12px;
+  }
+  .subtitle {
+    font-size: 17px; font-style: italic;
+    color: rgba(240,235,224,0.75); letter-spacing: 0.03em;
+  }
+  .form-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px; padding: 40px 36px;
+    backdrop-filter: blur(4px);
+  }
+  .field { margin-bottom: 28px; }
+  .field label {
+    display: block; font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold-dim); margin-bottom: 10px;
+  }
+  select {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 1px; color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px; padding: 12px 16px;
+    appearance: none; cursor: pointer;
+    transition: border-color 0.3s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 16px center;
+  }
+  select:focus { outline: none; border-color: var(--gold); }
+  select option { background: #1a1525; }
+  .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .mode-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 2px; padding: 14px 8px;
+    cursor: pointer; text-align: center;
+    transition: all 0.3s; color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .mode-btn:hover { border-color: var(--gold-dim); background: rgba(201,168,76,0.05); }
+  .mode-btn.active { border-color: var(--gold); background: rgba(201,168,76,0.1); color: var(--gold); }
+  .mode-icon { font-size: 22px; display: block; margin-bottom: 6px; }
+  .mode-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .btn-submit {
+    width: 100%; background: transparent;
+    border: 1px solid var(--gold); color: var(--gold);
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 13px; letter-spacing: 0.15em;
+    padding: 16px; cursor: pointer; margin-top: 32px;
+    transition: all 0.4s; position: relative; overflow: hidden;
+  }
+  .btn-submit::before {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gold); transform: translateX(-101%);
+    transition: transform 0.4s ease; z-index: -1;
+  }
+  .btn-submit:hover { color: var(--ink); }
+  .btn-submit:hover::before { transform: translateX(0); }
+  .loading { text-align: center; padding: 48px; display: none; }
+  .loading.show { display: block; }
+  .loading-symbol { font-size: 48px; display: block; animation: spin 3s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading p { margin-top: 20px; font-style: italic; color: rgba(245,240,232,0.5); font-size: 16px; }
+  .result { display: none; animation: fadeUp 0.8s ease forwards; }
+  .result.show { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .match-card {
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 40px 36px; position: relative;
+    background: rgba(255,255,255,0.02);
+  }
+  .match-card::before {
+    content: ''; position: absolute;
+    top: -1px; left: 20%; right: 20%; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+  .match-mode-label {
+    font-size: 10px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--gold-dim); margin-bottom: 20px;
+  }
+  .match-name {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(20px, 4vw, 28px);
+    color: var(--gold); margin-bottom: 6px; line-height: 1.3;
+  }
+  .match-aspect {
+    font-size: 14px; color: rgba(240,235,224,0.65);
+    letter-spacing: 0.08em; margin-bottom: 28px; font-style: italic;
+  }
+  .match-description {
+    font-size: 17px; line-height: 1.8;
+    color: rgba(240,235,224,0.95); font-style: italic;
+    margin-bottom: 28px;
+    border-left: 2px solid rgba(201,168,76,0.3);
+    padding-left: 20px;
+  }
+  .match-venue {
+    background: rgba(201,168,76,0.06);
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 16px 20px; margin-bottom: 28px;
+    font-size: 15px; color: rgba(240,235,224,0.85);
+  }
+  .match-venue strong {
+    color: var(--gold); font-style: normal; font-weight: 400;
+    display: block; font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .btn-share {
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; letter-spacing: 0.1em;
+    padding: 10px 20px; cursor: pointer;
+    transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+  }
+  .btn-share:hover { background: rgba(201,168,76,0.1); border-color: var(--gold); }
+  .btn-again {
+    background: transparent; border: none;
+    color: rgba(201,168,76,0.5);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; letter-spacing: 0.1em;
+    cursor: pointer; text-decoration: underline;
+    text-underline-offset: 3px; padding: 0; transition: color 0.3s;
+  }
+  .btn-again:hover { color: var(--gold); }
+  .share-copied {
+    font-size: 13px; color: var(--gold); font-style: italic;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .share-copied.show { opacity: 1; }
+  .error-msg {
+    color: var(--rose); font-style: italic; font-size: 15px;
+    padding: 16px; border: 1px solid rgba(196,122,122,0.2);
+    display: none; margin-top: 16px;
+  }
+  .error-msg.show { display: block; }
+</style>
+</head>
+<body>
+<div id="cosmic-app">
+<div class="stars"></div>
+<div class="nebula"></div>
+
+<div class="container">
+  <header>
+    <span class="symbol">☽</span>
+    <h1>Cosmic Match</h1>
+    <p class="subtitle">Forget dating apps. Ask the stars.</p>
+  </header>
+
+  <div id="formSection">
+    <div class="form-card">
+      <div class="field">
+        <label>Your Moon Sign</label>
+        <select id="moonSign">
+          <option value="">— select a sign —</option>
+          <option value="Aries">♈ Aries</option>
+          <option value="Taurus">♉ Taurus</option>
+          <option value="Gemini">♊ Gemini</option>
+          <option value="Cancer">♋ Cancer</option>
+          <option value="Leo">♌ Leo</option>
+          <option value="Virgo">♍ Virgo</option>
+          <option value="Libra">♎ Libra</option>
+          <option value="Scorpio">♏ Scorpio</option>
+          <option value="Sagittarius">♐ Sagittarius</option>
+          <option value="Capricorn">♑ Capricorn</option>
+          <option value="Aquarius">♒ Aquarius</option>
+          <option value="Pisces">♓ Pisces</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Partner's Gender</label>
+        <select id="gender">
+          <option value="">— select —</option>
+          <option value="m">Man</option>
+          <option value="f">Woman</option>
+          <option value="any">Doesn't matter</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Type of Connection</label>
+        <div class="mode-grid">
+          <button class="mode-btn" data-mode="Sun" onclick="selectMode(this)">
+            <span class="mode-icon">🏡</span>
+            <span class="mode-label">For Life</span>
+          </button>
+          <button class="mode-btn" data-mode="Asc" onclick="selectMode(this)">
+            <span class="mode-icon">✨</span>
+            <span class="mode-label">A Night Out</span>
+          </button>
+          <button class="mode-btn" data-mode="Mars" onclick="selectMode(this)">
+            <span class="mode-icon">🔥</span>
+            <span class="mode-label">Passion</span>
+          </button>
+        </div>
+      </div>
+      <div id="errorMsg" class="error-msg"></div>
+      <button class="btn-submit" onclick="findMatch()">READ MY STARS</button>
+    </div>
+  </div>
+
+  <div class="loading" id="loading">
+    <span class="loading-symbol">⟳</span>
+    <p>The stars are aligning just for you…</p>
+  </div>
+
+  <div class="result" id="result">
+    <div class="match-card">
+      <div class="match-mode-label" id="resultModeLabel"></div>
+      <div class="match-name" id="resultName"></div>
+      <div class="match-aspect" id="resultAspect"></div>
+      <div class="match-description" id="resultDescription"></div>
+      <div class="match-venue" id="resultVenue" style="display:none">
+        <strong>Where to take them</strong>
+        <span id="resultVenueText"></span>
+      </div>
+      <div class="actions">
+        <button class="btn-share" onclick="shareResult()">
+          <span>↗</span> Share your match
+        </button>
+        <button class="btn-again" onclick="resetApp()">← ask again</button>
+        <span class="share-copied" id="shareCopied">Link copied!</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// CELEBRITY DATABASE — built from your Excel
+// Structure: db[planet][gender][sign] = [{name, sun, asc, mars, deceased}]
+// ─────────────────────────────────────────────
+const rawData = [
+  ["Lady Gaga","f","Sun","Aries",null],["Lady Gaga","f","Asc","Gemini",null],["Lady Gaga","f","Mars","Capricorn",null],
+  ["Mariah Carey","f","Sun","Aries",null],["Mariah Carey","f","Asc","Taurus",null],["Mariah Carey","f","Mars","Sagittarius",null],
+  ["Emma Watson","f","Sun","Aries",null],["Emma Watson","f","Asc","Virgo",null],["Emma Watson","f","Mars","Aquarius",null],
+  ["Kristen Stewart","f","Sun","Aries",null],["Kristen Stewart","f","Asc","Gemini",null],["Kristen Stewart","f","Mars","Aquarius",null],
+  ["Kourtney Kardashian","f","Sun","Aries",null],["Kourtney Kardashian","f","Asc","Pisces",null],["Kourtney Kardashian","f","Mars","Aries",null],
+  ["Robert Downey Jr","m","Sun","Aries",null],["Robert Downey Jr","m","Asc","Leo",null],["Robert Downey Jr","m","Mars","Virgo",null],
+  ["Victoria Beckham","f","Sun","Aries",null],["Victoria Beckham","f","Asc","Cancer",null],["Victoria Beckham","f","Mars","Gemini",null],
+  ["Heath Ledger","m","Sun","Aries","deceased"],["Heath Ledger","m","Asc","Aries","deceased"],["Heath Ledger","m","Mars","Pisces","deceased"],
+  ["Vincent van Gogh","m","Sun","Aries","deceased"],["Vincent van Gogh","m","Asc","Cancer","deceased"],["Vincent van Gogh","m","Mars","Pisces","deceased"],
+  ["Charlie Chaplin","m","Sun","Aries","deceased"],["Charlie Chaplin","m","Asc","Taurus","deceased"],["Charlie Chaplin","m","Mars","Scorpio","deceased"],
+  ["Robert Pattinson","m","Sun","Taurus",null],["Robert Pattinson","m","Asc","Taurus",null],["Robert Pattinson","m","Mars","Capricorn",null],
+  ["George Clooney","m","Sun","Taurus",null],["George Clooney","m","Asc","Pisces",null],["George Clooney","m","Mars","Leo",null],
+  ["David Beckham","m","Sun","Taurus",null],["David Beckham","m","Asc","Taurus",null],["David Beckham","m","Mars","Pisces",null],
+  ["Adele","f","Sun","Taurus",null],["Adele","f","Asc","Cancer",null],["Adele","f","Mars","Aquarius",null],
+  ["Elizabeth II","f","Sun","Taurus","deceased"],["Elizabeth II","f","Asc","Capricorn","deceased"],["Elizabeth II","f","Mars","Aquarius","deceased"],
+  ["Gigi Hadid","f","Sun","Taurus",null],["Gigi Hadid","f","Asc","Taurus",null],["Gigi Hadid","f","Mars","Leo",null],
+  ["Uma Thurman","f","Sun","Taurus",null],["Uma Thurman","f","Asc","Virgo",null],["Uma Thurman","f","Mars","Gemini",null],
+  ["Chris Brown","m","Sun","Taurus",null],["Chris Brown","m","Asc","Leo",null],["Chris Brown","m","Mars","Cancer",null],
+  ["Mark Zuckerberg","m","Sun","Taurus",null],["Mark Zuckerberg","m","Asc","Virgo",null],["Mark Zuckerberg","m","Mars","Scorpio",null],
+  ["Henry Cavill","m","Sun","Taurus",null],["Henry Cavill","m","Asc","Aquarius",null],["Henry Cavill","m","Mars","Taurus",null],
+  ["Donald Trump","m","Sun","Gemini",null],["Donald Trump","m","Asc","Leo",null],["Donald Trump","m","Mars","Leo",null],
+  ["Angelina Jolie","f","Sun","Gemini",null],["Angelina Jolie","f","Asc","Cancer",null],["Angelina Jolie","f","Mars","Aries",null],
+  ["Marilyn Monroe","f","Sun","Gemini","deceased"],["Marilyn Monroe","f","Asc","Leo","deceased"],["Marilyn Monroe","f","Mars","Pisces","deceased"],
+  ["Johnny Depp","m","Sun","Gemini",null],["Johnny Depp","m","Asc","Leo",null],["Johnny Depp","m","Mars","Virgo",null],
+  ["Ye","m","Sun","Gemini",null],["Ye","m","Asc","Cancer",null],["Ye","m","Mars","Taurus",null],
+  ["Nicole Kidman","f","Sun","Gemini",null],["Nicole Kidman","f","Asc","Scorpio",null],["Nicole Kidman","f","Mars","Libra",null],
+  ["Chris Evans","m","Sun","Gemini",null],["Chris Evans","m","Asc","Scorpio",null],["Chris Evans","m","Mars","Gemini",null],
+  ["John Fitzgerald Kennedy","m","Sun","Gemini","deceased"],["John Fitzgerald Kennedy","m","Asc","Libra","deceased"],["John Fitzgerald Kennedy","m","Mars","Taurus","deceased"],
+  ["Tupac Shakur","m","Sun","Gemini","deceased"],["Tupac Shakur","m","Asc","Virgo","deceased"],["Tupac Shakur","m","Mars","Aquarius","deceased"],
+  ["Kendrick Lamar","m","Sun","Gemini",null],["Kendrick Lamar","m","Asc","Libra",null],["Kendrick Lamar","m","Mars","Cancer",null],
+  ["Ariana Grande","f","Sun","Cancer",null],["Ariana Grande","f","Asc","Capricorn",null],["Ariana Grande","f","Mars","Virgo",null],
+  ["Elon Musk","m","Sun","Cancer",null],["Elon Musk","m","Asc","Cancer",null],["Elon Musk","m","Mars","Aquarius",null],
+  ["Selena Gomez","f","Sun","Cancer",null],["Selena Gomez","f","Asc","Leo",null],["Selena Gomez","f","Mars","Taurus",null],
+  ["Lana Del Rey","f","Sun","Cancer",null],["Lana Del Rey","f","Asc","Scorpio",null],["Lana Del Rey","f","Mars","Cancer",null],
+  ["Tom Cruise","m","Sun","Cancer",null],["Tom Cruise","m","Asc","Gemini",null],["Tom Cruise","m","Mars","Taurus",null],
+  ["William, Prince of Wales","m","Sun","Cancer",null],["William, Prince of Wales","m","Asc","Sagittarius",null],["William, Prince of Wales","m","Mars","Libra",null],
+  ["Nikola Tesla","m","Sun","Cancer","deceased"],["Nikola Tesla","m","Asc","Taurus","deceased"],["Nikola Tesla","m","Mars","Libra","deceased"],
+  ["Khloe Kardashian","f","Sun","Cancer",null],["Khloe Kardashian","f","Asc","Aquarius",null],["Khloe Kardashian","f","Mars","Scorpio",null],
+  ["Lionel Messi","m","Sun","Cancer",null],["Lionel Messi","m","Asc","Aquarius",null],["Lionel Messi","m","Mars","Cancer",null],
+  ["Margot Robbie","f","Sun","Cancer",null],["Margot Robbie","f","Asc","Cancer",null],["Margot Robbie","f","Mars","Aries",null],
+  ["Barack Obama","m","Sun","Leo",null],["Barack Obama","m","Asc","Aquarius",null],["Barack Obama","m","Mars","Virgo",null],
+  ["Jennifer Lopez","f","Sun","Leo",null],["Jennifer Lopez","f","Asc","Libra",null],["Jennifer Lopez","f","Mars","Sagittarius",null],
+  ["Kylie Jenner","f","Sun","Leo",null],["Kylie Jenner","f","Asc","Capricorn",null],["Kylie Jenner","f","Mars","Libra",null],
+  ["Jennifer Lawrence","f","Sun","Leo",null],["Jennifer Lawrence","f","Asc","Sagittarius",null],["Jennifer Lawrence","f","Mars","Taurus",null],
+  ["Ben Affleck","m","Sun","Leo",null],["Ben Affleck","m","Asc","Cancer",null],["Ben Affleck","m","Mars","Virgo",null],
+  ["Demi Lovato","f","Sun","Leo",null],["Demi Lovato","f","Asc","Leo",null],["Demi Lovato","f","Mars","Gemini",null],
+  ["Arnold Schwarzenegger","m","Sun","Leo",null],["Arnold Schwarzenegger","m","Asc","Cancer",null],["Arnold Schwarzenegger","m","Mars","Gemini",null],
+  ["Dua Lipa","f","Sun","Leo",null],["Dua Lipa","f","Asc","Gemini",null],["Dua Lipa","f","Mars","Libra",null],
+  ["Meghan Markle","f","Sun","Leo",null],["Meghan Markle","f","Asc","Cancer",null],["Meghan Markle","f","Mars","Cancer",null],
+  ["Bill Clinton","m","Sun","Leo",null],["Bill Clinton","m","Asc","Libra",null],["Bill Clinton","m","Mars","Libra",null],
+  ["Beyoncé","f","Sun","Virgo",null],["Beyoncé","f","Asc","Aries",null],["Beyoncé","f","Mars","Leo",null],
+  ["Keanu Reeves","m","Sun","Virgo",null],["Keanu Reeves","m","Asc","Virgo",null],["Keanu Reeves","m","Mars","Cancer",null],
+  ["Prince Harry","m","Sun","Virgo",null],["Prince Harry","m","Asc","Capricorn",null],["Prince Harry","m","Mars","Sagittarius",null],
+  ["Zendaya","f","Sun","Virgo",null],["Zendaya","f","Asc","Aquarius",null],["Zendaya","f","Mars","Cancer",null],
+  ["Blake Lively","f","Sun","Virgo",null],["Blake Lively","f","Asc","Leo",null],["Blake Lively","f","Mars","Virgo",null],
+  ["Niall Horan","m","Sun","Virgo",null],["Niall Horan","m","Asc","Libra",null],["Niall Horan","m","Mars","Libra",null],
+  ["Warren Buffett","m","Sun","Virgo",null],["Warren Buffett","m","Asc","Sagittarius",null],["Warren Buffett","m","Mars","Cancer",null],
+  ["Liam Payne","m","Sun","Virgo",null],["Liam Payne","m","Asc","Scorpio",null],["Liam Payne","m","Mars","Libra",null],
+  ["Stephen King","m","Sun","Virgo",null],["Stephen King","m","Asc","Cancer",null],["Stephen King","m","Mars","Cancer",null],
+  ["Nick Jonas","m","Sun","Virgo",null],["Nick Jonas","m","Asc","Leo",null],["Nick Jonas","m","Mars","Cancer",null],
+  ["Kim Kardashian","f","Sun","Libra",null],["Kim Kardashian","f","Asc","Sagittarius",null],["Kim Kardashian","f","Mars","Sagittarius",null],
+  ["Eminem","m","Sun","Libra",null],["Eminem","m","Asc","Sagittarius",null],["Eminem","m","Mars","Libra",null],
+  ["Will Smith","m","Sun","Libra",null],["Will Smith","m","Asc","Gemini",null],["Will Smith","m","Mars","Virgo",null],
+  ["Bella Hadid","f","Sun","Libra",null],["Bella Hadid","f","Asc","Virgo",null],["Bella Hadid","f","Mars","Leo",null],
+  ["Cardi B","f","Sun","Libra",null],["Cardi B","f","Asc","Aries",null],["Cardi B","f","Mars","Cancer",null],
+  ["Zac Efron","m","Sun","Libra",null],["Zac Efron","m","Asc","Capricorn",null],["Zac Efron","m","Mars","Libra",null],
+  ["Snoop Dogg","m","Sun","Libra",null],["Snoop Dogg","m","Asc","Taurus",null],["Snoop Dogg","m","Mars","Aquarius",null],
+  ["Matt Damon","m","Sun","Libra",null],["Matt Damon","m","Asc","Aquarius",null],["Matt Damon","m","Mars","Virgo",null],
+  ["Bruno Mars","m","Sun","Libra",null],["Bruno Mars","m","Asc","Pisces",null],["Bruno Mars","m","Mars","Virgo",null],
+  ["Dakota Johnson","f","Sun","Libra",null],["Dakota Johnson","f","Asc","Capricorn",null],["Dakota Johnson","f","Mars","Libra",null],
+  ["Leonardo DiCaprio","m","Sun","Scorpio",null],["Leonardo DiCaprio","m","Asc","Libra",null],["Leonardo DiCaprio","m","Mars","Scorpio",null],
+  ["Kendall Jenner","f","Sun","Scorpio",null],["Kendall Jenner","f","Asc","Aries",null],["Kendall Jenner","f","Mars","Sagittarius",null],
+  ["Drake","m","Sun","Scorpio",null],["Drake","m","Asc","Leo",null],["Drake","m","Mars","Aquarius",null],
+  ["Ryan Gosling","m","Sun","Scorpio",null],["Ryan Gosling","m","Asc","Pisces",null],["Ryan Gosling","m","Mars","Sagittarius",null],
+  ["Ryan Reynolds","m","Sun","Scorpio",null],["Ryan Reynolds","m","Asc","Virgo",null],["Ryan Reynolds","m","Mars","Scorpio",null],
+  ["Emma Stone","f","Sun","Scorpio",null],["Emma Stone","f","Asc","Sagittarius",null],["Emma Stone","f","Mars","Aries",null],
+  ["Anne Hathaway","f","Sun","Scorpio",null],["Anne Hathaway","f","Asc","Sagittarius",null],["Anne Hathaway","f","Mars","Capricorn",null],
+  ["Matthew McConaughey","m","Sun","Scorpio",null],["Matthew McConaughey","m","Asc","Gemini",null],["Matthew McConaughey","m","Mars","Aquarius",null],
+  ["Pete Davidson","m","Sun","Scorpio",null],["Pete Davidson","m","Asc","Gemini",null],["Pete Davidson","m","Mars","Sagittarius",null],
+  ["Charles III","m","Sun","Scorpio",null],["Charles III","m","Asc","Leo",null],["Charles III","m","Mars","Sagittarius",null],
+  ["Taylor Swift","f","Sun","Sagittarius",null],["Taylor Swift","f","Asc","Capricorn",null],["Taylor Swift","f","Mars","Scorpio",null],
+  ["Brad Pitt","m","Sun","Sagittarius",null],["Brad Pitt","m","Asc","Sagittarius",null],["Brad Pitt","m","Mars","Capricorn",null],
+  ["Miley Cyrus","f","Sun","Sagittarius",null],["Miley Cyrus","f","Asc","Taurus",null],["Miley Cyrus","f","Mars","Cancer",null],
+  ["Scarlett Johansson","f","Sun","Sagittarius",null],["Scarlett Johansson","f","Asc","Sagittarius",null],["Scarlett Johansson","f","Mars","Aquarius",null],
+  ["Billie Eilish","f","Sun","Sagittarius",null],["Billie Eilish","f","Asc","Aries",null],["Billie Eilish","f","Mars","Pisces",null],
+  ["Nicki Minaj","f","Sun","Sagittarius",null],["Nicki Minaj","f","Asc","Aquarius",null],["Nicki Minaj","f","Mars","Capricorn",null],
+  ["Jay-Z","m","Sun","Sagittarius",null],["Jay-Z","m","Asc","Virgo",null],["Jay-Z","m","Mars","Aquarius",null],
+  ["Ian Somerhalder","m","Sun","Sagittarius",null],["Ian Somerhalder","m","Asc","Aquarius",null],["Ian Somerhalder","m","Mars","Sagittarius",null],
+  ["Vincent Cassel","m","Sun","Sagittarius",null],["Vincent Cassel","m","Asc","Leo",null],["Vincent Cassel","m","Mars","Virgo",null],
+  ["Charlie Puth","m","Sun","Sagittarius",null],["Charlie Puth","m","Asc","Capricorn",null],["Charlie Puth","m","Mars","Sagittarius",null],
+  ["Timothée Chalamet","m","Sun","Capricorn",null],["Timothée Chalamet","m","Asc","Virgo",null],["Timothée Chalamet","m","Mars","Capricorn",null],
+  ["Zayn Malik","m","Sun","Capricorn",null],["Zayn Malik","m","Asc","Pisces",null],["Zayn Malik","m","Mars","Cancer",null],
+  ["Catherine, Princess of Wales","f","Sun","Capricorn",null],["Catherine, Princess of Wales","f","Asc","Leo",null],["Catherine, Princess of Wales","f","Mars","Libra",null],
+  ["Jared Leto","m","Sun","Capricorn",null],["Jared Leto","m","Asc","Taurus",null],["Jared Leto","m","Mars","Aries",null],
+  ["Orlando Bloom","m","Sun","Capricorn",null],["Orlando Bloom","m","Asc","Aquarius",null],["Orlando Bloom","m","Mars","Capricorn",null],
+  ["Bradley Cooper","m","Sun","Capricorn",null],["Bradley Cooper","m","Asc","Sagittarius",null],["Bradley Cooper","m","Mars","Sagittarius",null],
+  ["Jude Law","m","Sun","Capricorn",null],["Jude Law","m","Asc","Sagittarius",null],["Jude Law","m","Mars","Scorpio",null],
+  ["Kate Moss","f","Sun","Capricorn",null],["Kate Moss","f","Asc","Taurus",null],["Kate Moss","f","Mars","Taurus",null],
+  ["LeBron James","m","Sun","Capricorn",null],["LeBron James","m","Asc","Gemini",null],["LeBron James","m","Mars","Pisces",null],
+  ["Zooey Deschanel","f","Sun","Capricorn",null],["Zooey Deschanel","f","Asc","Capricorn",null],["Zooey Deschanel","f","Mars","Virgo",null],
+  ["Harry Styles","m","Sun","Aquarius",null],["Harry Styles","m","Asc","Libra",null],["Harry Styles","m","Mars","Aquarius",null],
+  ["Jennifer Aniston","f","Sun","Aquarius",null],["Jennifer Aniston","f","Asc","Libra",null],["Jennifer Aniston","f","Mars","Scorpio",null],
+  ["Shakira","f","Sun","Aquarius",null],["Shakira","f","Asc","Aries",null],["Shakira","f","Mars","Capricorn",null],
+  ["Cristiano Ronaldo","m","Sun","Aquarius",null],["Cristiano Ronaldo","m","Asc","Capricorn",null],["Cristiano Ronaldo","m","Mars","Aries",null],
+  ["Justin Timberlake","m","Sun","Aquarius",null],["Justin Timberlake","m","Asc","Leo",null],["Justin Timberlake","m","Mars","Aquarius",null],
+  ["Paris Hilton","f","Sun","Aquarius",null],["Paris Hilton","f","Asc","Sagittarius",null],["Paris Hilton","f","Mars","Pisces",null],
+  ["The Weeknd","m","Sun","Aquarius",null],["The Weeknd","m","Asc","Cancer",null],["The Weeknd","m","Mars","Capricorn",null],
+  ["Ashton Kutcher","m","Sun","Aquarius",null],["Ashton Kutcher","m","Asc","Gemini",null],["Ashton Kutcher","m","Mars","Cancer",null],
+  ["Robbie Williams","m","Sun","Aquarius",null],["Robbie Williams","m","Asc","Leo",null],["Robbie Williams","m","Mars","Taurus",null],
+  ["Christina Ricci","f","Sun","Aquarius",null],["Christina Ricci","f","Asc","Virgo",null],["Christina Ricci","f","Mars","Virgo",null],
+  ["Rihanna","f","Sun","Pisces",null],["Rihanna","f","Asc","Aries",null],["Rihanna","f","Mars","Sagittarius",null],
+  ["Justin Bieber","m","Sun","Pisces",null],["Justin Bieber","m","Asc","Scorpio",null],["Justin Bieber","m","Mars","Aquarius",null],
+  ["Drew Barrymore","f","Sun","Pisces",null],["Drew Barrymore","f","Asc","Gemini",null],["Drew Barrymore","f","Mars","Capricorn",null],
+  ["Camila Cabello","f","Sun","Pisces",null],["Camila Cabello","f","Asc","Taurus",null],["Camila Cabello","f","Mars","Libra",null],
+  ["Adam Levine","m","Sun","Pisces",null],["Adam Levine","m","Asc","Leo",null],["Adam Levine","m","Mars","Pisces",null],
+  ["Olivia Rodrigo","f","Sun","Pisces",null],["Olivia Rodrigo","f","Asc","Capricorn",null],["Olivia Rodrigo","f","Mars","Sagittarius",null],
+  ["Millie Bobby Brown","f","Sun","Pisces",null],["Millie Bobby Brown","f","Asc","Virgo",null],["Millie Bobby Brown","f","Mars","Taurus",null],
+  ["Jensen Ackles","m","Sun","Pisces",null],["Jensen Ackles","m","Asc","Capricorn",null],["Jensen Ackles","m","Mars","Cancer",null],
+  ["Daniel Craig","m","Sun","Pisces",null],["Daniel Craig","m","Asc","Scorpio",null],["Daniel Craig","m","Mars","Aries",null],
+  ["Madison Beer","f","Sun","Pisces",null],["Madison Beer","f","Asc","Gemini",null],["Madison Beer","f","Mars","Scorpio",null],
+];
+
+// Build lookup: profiles[name] = {gender, sun, asc, mars, deceased}
+const profiles = {};
+for (const [name, gender, planet, sign, deceased] of rawData) {
+  if (!name) continue;
+  if (!profiles[name]) profiles[name] = { gender, sun: null, asc: null, mars: null, deceased: !!deceased };
+  if (planet === "Sun") profiles[name].sun = sign;
+  if (planet === "Asc") profiles[name].asc = sign;
+  if (planet === "Mars") profiles[name].mars = sign;
+}
+
+// Build index: db[planet][gender][sign] = [name, ...]
+const db = { Sun: {}, Asc: {}, Mars: {} };
+for (const [planet] of [["Sun"],["Asc"],["Mars"]]) {
+  db[planet] = {};
+}
+for (const [name, p] of Object.entries(profiles)) {
+  for (const planet of ["Sun","Asc","Mars"]) {
+    const sign = p[planet === "Sun" ? "sun" : planet === "Asc" ? "asc" : "mars"];
+    if (!sign) continue;
+    const g = p.gender;
+    if (!db[planet][g]) db[planet][g] = {};
+    if (!db[planet][g][sign]) db[planet][g][sign] = [];
+    db[planet][g][sign].push(name);
+  }
+}
+
+const venuesBySocialMoon = {
+  Aries:       "A sports game, a boxing match, a car show — anywhere the energy is electric and the crowd is loud",
+  Taurus:      "A long brunch, a wine or cheese tasting, a spa day, or a farm-to-table dinner with zero rush",
+  Gemini:      "A trivia night, a book fair, a comedy show, or a cocktail bar with conversation that goes until 2am",
+  Cancer:      "A cozy dinner at home, a farmers market, a waterfront walk, a private film screening",
+  Leo:         "A film premiere, a fashion show, a rooftop bar, a VIP dinner — anywhere you can be seen",
+  Virgo:       "A cooking class, the theatre, a museum after-hours, a literary salon",
+  Libra:       "A cocktail party, a contemporary art opening, a ballroom dance, a curated wine bar",
+  Scorpio:     "An escape room, a jazz club, an immersive theatre show, a candlelit speakeasy",
+  Sagittarius: "A weekend trip, a street festival, a cultural fair, any outdoor adventure",
+  Capricorn:   "A business dinner, a whisky bar, a classical concert, a rooftop with a view",
+  Aquarius:    "A tech talk, a late-night gallery, an avant-garde performance, an activism fundraiser",
+  Pisces:      "An indie concert, a poetry reading, cinema under the stars, a walk along the water"
+};
+
+const modeLabels = {
+  Sun:  "A partner for life · Moon ↔ Sun",
+  Asc:  "A night out · Moon ↔ Ascendant",
+  Mars: "Pure magnetism · Moon ↔ Mars"
+};
+
+const modeAspects = {
+  Sun:  ["Conjunction", "Opposition", "Square", "Trine"],
+  Asc:  ["Conjunction", "Trine"],
+  Mars: ["Conjunction", "Square", "Opposition"]
+};
+
+let selectedMode = null;
+let currentResult = null;
+
+function selectMode(btn) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedMode = btn.dataset.mode;
+}
+
+function resetApp() {
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('loading').classList.remove('show');
+  document.getElementById('errorMsg').classList.remove('show');
+  document.getElementById('shareCopied').classList.remove('show');
+}
+
+async function findMatch() {
+  const moon = document.getElementById('moonSign').value;
+  const gender = document.getElementById('gender').value;
+  const errEl = document.getElementById('errorMsg');
+
+  if (!moon || !gender || !selectedMode) {
+    errEl.textContent = "Please fill in all fields and choose a connection type.";
+    errEl.classList.add('show');
+    return;
+  }
+  errEl.classList.remove('show');
+
+  // Pick gender
+  const genderKey = gender === 'any'
+    ? (Math.random() > 0.5 ? 'm' : 'f')
+    : gender;
+
+  // Find candidates
+  const pool = (db[selectedMode]?.[genderKey]?.[moon]) || [];
+  if (!pool.length) {
+    errEl.textContent = "No match found for this combination. Try a different gender or mode.";
+    errEl.classList.add('show');
+    return;
+  }
+
+  const name = pool[Math.floor(Math.random() * pool.length)];
+  const p = profiles[name];
+  const aspect = modeAspects[selectedMode][Math.floor(Math.random() * modeAspects[selectedMode].length)];
+
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('loading').classList.add('show');
+
+  const prompt = buildPrompt(selectedMode, moon, name, p, aspect);
+  let description = "";
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      signal: controller.signal,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 300,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    clearTimeout(timeout);
+    const data = await res.json();
+    description = data.content?.[0]?.text || getFallback(mode, moon, name, p, aspect);
+  } catch (e) {
+    description = getFallback(mode, moon, name, p, aspect);
+  }
+
+  document.getElementById('loading').classList.remove('show');
+
+  const planetLabel = { Sun: "Sun", Asc: "Ascendant", Mars: "Mars" }[selectedMode];
+  const planetSign = { Sun: p.sun, Asc: p.asc, Mars: p.mars }[selectedMode];
+
+  currentResult = { name, moon, mode: selectedMode, aspect, description };
+
+  document.getElementById('resultModeLabel').textContent = modeLabels[selectedMode];
+  document.getElementById('resultName').textContent = name;
+  document.getElementById('resultAspect').textContent = `${planetLabel} in ${planetSign} · Synastry ${aspect} with your Moon in ${moon}`;
+  document.getElementById('resultDescription').textContent = description;
+
+  const venueEl = document.getElementById('resultVenue');
+  if (selectedMode === 'Asc') {
+    document.getElementById('resultVenueText').textContent = venuesBySocialMoon[moon];
+    venueEl.style.display = 'block';
+  } else {
+    venueEl.style.display = 'none';
+  }
+
+  document.getElementById('result').classList.add('show');
+}
+
+function getFallback(mode, moon, name, p, aspect) {
+  const deceased = p.deceased ? ` Unavailable in this dimension, but written in your stars regardless.` : "";
+  const aspectMood = {
+    Conjunction: "mirrors your emotional world so precisely it's almost unsettling",
+    Opposition:  "pulls you in exactly the opposite direction — which, cosmically, is the point",
+    Square:      "creates enough friction to make things genuinely interesting",
+    Trine:       "flows into your emotional landscape with almost suspicious ease"
+  };
+  const modeCopy = {
+    Sun:  `Your Moon in ${moon} and ${name}'s Sun in ${p.sun} ${aspectMood[aspect] || "aligns with your emotional core"}. There's a reason this name keeps appearing — the chart doesn't lie.${deceased}`,
+    Asc:  `Your Moon in ${moon} reads ${name}'s ${p.asc} Ascendant like a native language. In public, you'd look like you've known each other for years. The room would notice.${deceased}`,
+    Mars: `${name}'s Mars in ${p.mars} hits your Moon in ${moon} like a signal you didn't know you were broadcasting. The chemistry is not subtle. It was never going to be.${deceased}`
+  };
+  return modeCopy[mode] || `The stars have spoken. ${name} and your Moon in ${moon} — the math checks out.`;
+}
+
+function buildPrompt(mode, moon, name, p, aspect) {
+  const modeContext = {
+    Sun:  `This is a life partner match. Moon in ${moon} + their Sun in ${p.sun} (${aspect}). Their Ascendant is ${p.asc}, Mars is ${p.mars}.`,
+    Asc:  `This is a "night out" companion match. Moon in ${moon} + their Ascendant in ${p.asc} (${aspect}). Their Sun is ${p.sun}, Mars is ${p.mars}.`,
+    Mars: `This is a raw attraction match. Moon in ${moon} + their Mars in ${p.mars} (${aspect}). Their Sun is ${p.sun}, Ascendant is ${p.asc}.`
+  };
+
+  const deadNote = p.deceased
+    ? `Note: ${name} is a historical figure. Lean into the humor — something like "obviously unavailable, but written in your stars regardless."`
+    : "";
+
+  return `You write short, witty, slightly cheeky astrology compatibility blurbs.
+
+User: Moon in ${moon}
+Their cosmic match: ${name}
+Astrology: ${modeContext[mode]}
+${deadNote}
+
+Write 2–3 sentences in English explaining why this person is the perfect match. Naturally mention the specific signs (Moon in ${moon}, and whichever of their placements is most relevant). Tone: confident, playful, a little knowing — like the universe already decided and you're just delivering the news. No intros like "Of course!" Start immediately with the substance.`;
+}
+
+function shareResult() {
+  if (!currentResult) return;
+
+  const modeLabels2 = { Sun: "for life", Asc: "for a night out", Mars: "for passion" };
+  const text = `My cosmic match ${modeLabels2[currentResult.mode]}: ${currentResult.name} ☽\n\nMoon in ${currentResult.moon} + ${currentResult.aspect}\n\nFind yours → ${window.location.href}`;
+
+  if (navigator.share) {
+    navigator.share({ title: "My Cosmic Match", text }).catch(() => copyFallback(text));
+  } else {
+    copyFallback(window.location.href);
+  }
+}
+
+function copyFallback(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const el = document.getElementById('shareCopied');
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2500);
+  });
+}
+</script>
+</body>
+</html>
